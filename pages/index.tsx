@@ -1,16 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import { drugList } from "./drugs";
-import { useEffect, useState } from "react";
-import { useRef } from "react";
+import { useState } from "react";
+import { Drug } from "./api/drugs";
 
-console.log(drugList);
-
-// Attempting to make the placeholder say searching for 'current months' drug tariff
-const d = new Date();
-let m = d.getMonth();
-const monthNames: string[] = [
+const MONTHS: string[] = [
   "January",
   "February",
   "March",
@@ -24,35 +17,110 @@ const monthNames: string[] = [
   "November",
   "December",
 ];
-let todaysDate = monthNames[m];
 
-console.log(todaysDate);
-
-// Creating the search bar functionality
-// const [searchTerm, setSearchTerm] = useState<string>("");
-// {drugList
-//   .filter((drug) => {
-//     if (searchTerm == "") {
-//       return drug;
-//     } else if (
-//       drug.name.toLowerCase().includes(searchTerm.toLowerCase())
-//     ) {
-//       return drug;
-//     }
-//   })
-//   .map((drug, index) => (
-//     <div
-//       key={index}
-//       className="grid grid-cols-4 even:bg-gray-100 py-1"
-//     >
-//       <div>{drug.name}</div>
-//       <div>{drug.packSize}</div>
-//       <div>{drug.category}</div>
-//       <div>{drug.price}</div>
-//     </div>
+const DRUGS: Drug[] = [
+  {
+    name: "Amlodipine 5mg",
+    packSize: "28",
+    category: "M",
+    price: "40",
+  },
+  {
+    name: "Amlodipine 10mg",
+    packSize: "28",
+    category: "M",
+    price: "80",
+  },
+  {
+    name: "Bisoprolol 1.25mg",
+    packSize: "28",
+    category: "M",
+    price: "20",
+  },
+  {
+    name: "Bisoprolol 2.5mg",
+    packSize: "28",
+    category: "M",
+    price: "40",
+  },
+  {
+    name: "Candesartan 4mg",
+    packSize: "28",
+    category: "M",
+    price: "180",
+  },
+  {
+    name: "Candesartan 8mg",
+    packSize: "28",
+    category: "M",
+    price: "360",
+  },
+  {
+    name: "Amlodipine 5mg",
+    packSize: "28",
+    category: "M",
+    price: "40",
+  },
+  {
+    name: "Amlodipine 10mg",
+    packSize: "28",
+    category: "M",
+    price: "80",
+  },
+  {
+    name: "Bisoprolol 1.25mg",
+    packSize: "28",
+    category: "M",
+    price: "20",
+  },
+  {
+    name: "Bisoprolol 2.5mg",
+    packSize: "28",
+    category: "M",
+    price: "40",
+  },
+  {
+    name: "Candesartan 4mg",
+    packSize: "28",
+    category: "M",
+    price: "180",
+  },
+  {
+    name: "Candesartan 8mg",
+    packSize: "28",
+    category: "M",
+    price: "360",
+  },
+];
 
 const Home: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // Creating a drug list variable and setting it to DRUGS.
+  // If you ever wanted to change druglist youd use the setDruglist method
+  const [drugList, setDruglist] = useState<Drug[]>(DRUGS);
+
+  // Date
+  // This is a horrible way to get date stuff. Dates in javascript are known to be
+  // a pain in the arse. Typically you would use a date package in your project to help
+  // make using dates easier e.g. https://date-fns.org/
+  const todaysDate = new Date();
+  let monthName = MONTHS[todaysDate.getMonth()];
+
+  /**
+   * Ive created this method. What this is doing is calling your `drugs` api
+   * endpoint. Whenever the input is changed it calls this getDrugs method.
+   * If you look in the google console you will see the drugs being outputted out everytime.
+   * 
+   * Be good to try and remove the hardcode drugs variable in this file and just try and use
+   * the api route. Be tricky though because you might get some weird loading state whilst
+   * the front end (client) is waiting for a response from the backend (api).
+   */
+  const getDrugs = async () => {
+    const response = await fetch("/api/drugs").then((res) => res.json());
+    console.log(response);
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -60,7 +128,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <nav className="flex space-x-96 py-8 text-2xl justify-center shadow-md w-screen mb-20">
+      {/* This isnt right. Broken on mobile */}
+      {/* <nav className="flex space-x-96 py-8 text-2xl justify-center shadow-md w-screen mb-20">
         <div className="pr-96 font-bold text-blue-600">
           <h2>🔎 Drug Tariff Viewer</h2>
         </div>
@@ -69,7 +138,7 @@ const Home: NextPage = () => {
           <div>Log In</div>
           <div>Placeholder</div>
         </div>
-      </nav>
+      </nav> */}
 
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
         <h1 className="text-6xl font-bold">
@@ -85,9 +154,12 @@ const Home: NextPage = () => {
             id="search"
             className="py-1 justify-center text-center text-xl border-2 border-slate-300 rounded-md w-6/12 outline-none"
             type="search"
-            placeholder="&#x1F50D; Search through {todaysDate}'s drug tariff..."
+            // You need to use the special character in a string to ourput a variable ` ${variable} `
+            placeholder={`Search through ${monthName}'s drug tariff...`}
             onChange={(e) => {
               setSearchTerm(e.target.value);
+              // Get drugs calling the api every time this input is changed. 
+              getDrugs();
             }}
           ></input>
         </div>
