@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { Drug } from "./api/drugs";
+import { DRUGS } from "./api/drugs";
+import { drugs } from "./api/PartVIIIAMar23.json";
 
 const MONTHS: string[] = [
   "January",
@@ -18,81 +20,6 @@ const MONTHS: string[] = [
   "December",
 ];
 
-const DRUGS: Drug[] = [
-  {
-    name: "Amlodipine 5mg",
-    packSize: "28",
-    category: "M",
-    price: "40",
-  },
-  {
-    name: "Amlodipine 10mg",
-    packSize: "28",
-    category: "M",
-    price: "80",
-  },
-  {
-    name: "Bisoprolol 1.25mg",
-    packSize: "28",
-    category: "M",
-    price: "20",
-  },
-  {
-    name: "Bisoprolol 2.5mg",
-    packSize: "28",
-    category: "M",
-    price: "40",
-  },
-  {
-    name: "Candesartan 4mg",
-    packSize: "28",
-    category: "M",
-    price: "180",
-  },
-  {
-    name: "Candesartan 8mg",
-    packSize: "28",
-    category: "M",
-    price: "360",
-  },
-  {
-    name: "Amlodipine 5mg",
-    packSize: "28",
-    category: "M",
-    price: "40",
-  },
-  {
-    name: "Amlodipine 10mg",
-    packSize: "28",
-    category: "M",
-    price: "80",
-  },
-  {
-    name: "Bisoprolol 1.25mg",
-    packSize: "28",
-    category: "M",
-    price: "20",
-  },
-  {
-    name: "Bisoprolol 2.5mg",
-    packSize: "28",
-    category: "M",
-    price: "40",
-  },
-  {
-    name: "Candesartan 4mg",
-    packSize: "28",
-    category: "M",
-    price: "180",
-  },
-  {
-    name: "Candesartan 8mg",
-    packSize: "28",
-    category: "M",
-    price: "360",
-  },
-];
-
 const Home: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -104,14 +31,17 @@ const Home: NextPage = () => {
   // This is a horrible way to get date stuff. Dates in javascript are known to be
   // a pain in the arse. Typically you would use a date package in your project to help
   // make using dates easier e.g. https://date-fns.org/
+  // New Date() returns a new Date object - of todays date
   const todaysDate = new Date();
+  // getMonth() returns the month 0-11 of the current date
+  // MONTHS is an array of months 0-11 MONTHS[] displays the month via getMONTH of the current date.
   let monthName = MONTHS[todaysDate.getMonth()];
 
   /**
    * Ive created this method. What this is doing is calling your `drugs` api
    * endpoint. Whenever the input is changed it calls this getDrugs method.
    * If you look in the google console you will see the drugs being outputted out everytime.
-   * 
+   *
    * Be good to try and remove the hardcode drugs variable in this file and just try and use
    * the api route. Be tricky though because you might get some weird loading state whilst
    * the front end (client) is waiting for a response from the backend (api).
@@ -158,7 +88,7 @@ const Home: NextPage = () => {
             placeholder={`Search through ${monthName}'s drug tariff...`}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              // Get drugs calling the api every time this input is changed. 
+              // Get drugs calling the api every time this input is changed.
               getDrugs();
             }}
           ></input>
@@ -174,12 +104,13 @@ const Home: NextPage = () => {
             <h4>Basic Price</h4>
           </div>
           <div className="overflow-scroll w-full">
-            {drugList
+            {/* Now using the dugs json file as the data set to be filtered through. */}
+            {drugs
               .filter((drug) => {
                 if (searchTerm == "") {
                   return drug;
                 } else if (
-                  drug.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  drug.Medicine.toLowerCase().includes(searchTerm.toLowerCase())
                 ) {
                   return drug;
                 }
@@ -189,10 +120,10 @@ const Home: NextPage = () => {
                   key={index}
                   className="grid grid-cols-4 even:bg-gray-100 py-1"
                 >
-                  <div>{drug.name}</div>
-                  <div>{drug.packSize}</div>
-                  <div>{drug.category}</div>
-                  <div>{drug.price}</div>
+                  <div>{drug.Medicine}</div>
+                  <div>{drug.Packsize}</div>
+                  <div>{drug.DrugTariffCategory}</div>
+                  <div>{drug.BasicPrice}</div>
                 </div>
               ))}
           </div>
