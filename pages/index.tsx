@@ -59,18 +59,18 @@ const Home: NextPage = () => {
       </Head>
 
       {/* This isnt right. Broken on mobile */}
-      {/* <nav className="flex space-x-96 py-8 text-2xl justify-center shadow-md w-screen mb-20">
+      {/* <nav className="flex space-x-96 py-8 text-2xl justify-center shadow-md w-screen ">
         <div className="pr-96 font-bold text-blue-600">
           <h2>🔎 Drug Tariff Viewer</h2>
         </div>
         <div className="flex space-x-4 font-bold">
-          <div>About</div>
-          <div>Log In</div>
-          <div>Placeholder</div>
+          <div>DT Specials</div>
+          <div>Blacklist</div>
+          <div>Watchlist</div>
         </div>
       </nav> */}
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+      <main className="flex w-full flex-1 flex-col items-center justify-center  text-center mt-20">
         <h1 className="text-6xl font-bold">
           Welcome to the <a className="text-blue-600">Drug Tariff Viewer!</a>
         </h1>
@@ -89,23 +89,23 @@ const Home: NextPage = () => {
             onChange={(e) => {
               setSearchTerm(e.target.value);
               // Get drugs calling the api every time this input is changed.
-              getDrugs();
+              // getDrugs();
             }}
           ></input>
         </div>
         <div
           id="results"
-          className=" flex flex-col mb-16  mt-16 w-8/12 h-56 border shadow-md"
+          className=" flex flex-col mb-16  mt-8 w-8/12 h-96 border shadow-md"
         >
-          <div className=" grid grid-cols-4 sticky border-b justify-center w-full shadow py-1 font-medium">
-            <h4 className="border-r">Medicine</h4>
+          <div className=" grid grid-cols-5 sticky border-b justify-center w-full shadow py-1 font-medium">
+            <h4 className="border-r col-span-2">Medicine</h4>
             <h4 className="border-r">Pack Size</h4>
-            <h4 className="border-r">Category</h4>
+            <h4 className="border-r max-[390px]:hidden">Category</h4>
             <h4>Basic Price</h4>
           </div>
-          <div className="overflow-scroll w-full">
+          <div className="overflow-scroll w-full ">
             {/* Now using the dugs json file as the data set to be filtered through. */}
-            {drugs
+            {drugList
               .filter((drug) => {
                 if (searchTerm == "") {
                   return drug;
@@ -118,11 +118,13 @@ const Home: NextPage = () => {
               .map((drug, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-4 even:bg-gray-100 py-1"
+                  className="grid grid-cols-5 even:bg-gray-100 py-1"
                 >
-                  <div>{drug.Medicine}</div>
-                  <div>{drug.Packsize}</div>
-                  <div>{drug.DrugTariffCategory}</div>
+                  <div className="col-span-2">{drug.Medicine}</div>
+                  <div>{drug.PackSize}</div>
+                  <div className="max-[390px]:hidden">
+                    {drug.DrugTariffCategory}
+                  </div>
                   <div>{drug.BasicPrice}</div>
                 </div>
               ))}
